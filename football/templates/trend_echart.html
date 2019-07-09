@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ team }} &nbsp;&nbsp;{{ startTime }} 走势图</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+    <meta name="viewport" content="width=device-width"/>
+    <!-- Bootstrap core CSS     -->
+    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" rel="stylesheet"/>
+    <!-- Animation library for notifications   -->
+    <link href="{{ url_for('static', filename='assets/css/animate.min.css') }}" rel="stylesheet"/>
+
+    <!--  Paper Dashboard core CSS    -->
+    <link href="{{ url_for('static', filename='assets/css/paper-dashboard.css') }}?q=16" rel="stylesheet"/>
+
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="{{ url_for('static', filename='assets/css/demo.css') }}" rel="stylesheet"/>
+    <script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}" type="text/javascript"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+
+    <style>
+        .red_fnt{
+            color: #FF4500;
+            font-weight: bold;
+        }
+        .grn_fnt{
+             color: #32CD32;
+            font-weight: bold;
+        }
+        .table>tbody>tr>td{
+        padding: 8px;
+        line-height: 1.228571;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body style="height: 100%; margin: 0">
+
+<div class="wrapper">
+    <div class="sidebar-wrapper">
+
+        <div class="content">
+            <div class="container-fluid">
+                <ul class="nav">
+
+                    <li>
+                        <a href="javascript:void(0)">
+                            <i class="ti-view-list-alt"></i>
+                            <p>{{ team }} &nbsp;&nbsp;{{ startTime }}</p>
+                        </a>
+                    </li>
+                </ul>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">百家-即时凯利</h4>
+                                      <p style="margin-left: 406px;margin-bottom: 0;">胜-------平-------负</p>
+                                      <p style="margin-left: 280px;margin-bottom: 0;">初始欧赔凯利：
+                                          {% if oupei_kaili %}
+                                              {{ '%.3f'%(oupei_kaili[0].kelly_win_num) }}--{{ '%.3f'%(oupei_kaili[0]['kelly_avg_num'])}}--{{ '%.3f'%(oupei_kaili[0].kelly_lost_num) }}
+                                          {% else %}
+                                          {% endif %}
+                                      </p>
+
+
+                                      <p style="margin-left: 280px;margin-bottom: 0;">即时欧赔凯利：
+                                          {% if biajia_oupei_end %}
+                                                {{ '%.3f'%(biajia_oupei_end[0].kelly_win_num) }}--{{ '%.3f'%(biajia_oupei_end[0].kelly_avg_num) }}--{{ '%.3f'%(biajia_oupei_end[0].kelly_lost_num) }}
+                                          {% else %}
+                                          {% endif %}
+                                      </p>
+
+
+                            </div>
+                            <div class="content" style="height: 100%; margin: 0">
+                                <div class="ct-chart ct-perfect-fourth">
+                                    <div id="container4" style="height: 100%"></div>
+                                </div>
+
+                                <div class="footer">
+                                    <div class="chart-legend">
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">让球即时凯利</h4>
+                                <p style="margin-left: 406px;margin-bottom: 0;">胜-------平-------负</p>
+                                <p style="margin-left: 280px;margin-bottom: 0;">初始让球凯利：
+                                    {% if rangqiu_kaili %}
+                                        {{ '%.3f'%(rangqiu_kaili[0].kelly_win_num) }}--{{ '%.3f'%(rangqiu_kaili[0]['kelly_avg_num'])}}--{{ '%.3f'%(rangqiu_kaili[0].kelly_lost_num) }}
+                                    {% else %}
+                                    {% endif %}
+                                </p>
+                                <p style="margin-left: 280px;margin-bottom: 0;">即时让球凯利：
+                                    {% if rangqiu_oupei_end %}
+                                        {{ '%.3f'%(rangqiu_oupei_end[0].kelly_win_num) }}--{{ '%.3f'%(rangqiu_oupei_end[0].kelly_avg_num) }}--{{ '%.3f'%(rangqiu_oupei_end[0].kelly_lost_num) }}
+                                    {% else %}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="content" style="height: 100%; margin: 0">
+                                <div class="ct-chart ct-perfect-fourth">
+                                    <div id="container2" style="height: 100%"></div>
+                                </div>
+
+                                <div class="footer">
+                                    <div class="chart-legend">
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">比分走势图</h4>
+                            </div>
+                            <div class="content" style="height: 100%; margin: 0">
+                                <div class="ct-chart ct-perfect-fourth">
+                                    <div id="container_bifen" style="height: 100%"></div>
+                                </div>
+
+                                <div class="footer">
+                                    <div class="chart-legend">
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="header">
+                           {# <h4 class="title">波胆</h4>
+                            <p class="category"></p>#}
+                        </div>
+                        <div class="content table-responsive table-full-width">
+                            <table class="table table-striped">
+                                <thead id="gameThead">
+                                <th></th>
+                                <th>1-0</th>
+                                <th>2-0</th>
+                                <th>2-1</th>
+                                <th>3-0</th>
+                                <th>3-1</th>
+                                <th>3-2</th>
+                                <th>4-0</th>
+                                <th>4-1</th>
+                                <th>4-2</th>
+                                <th>4-3</th>
+                                <th>0-0</th>
+                                <th>1-1</th>
+                                <th>2-2</th>
+                                <th>3-3</th>
+                                <th>4-4</th>
+                                <th>0-1</th>
+                                <th>0-2</th>
+                                <th>1-2</th>
+                                <th>0-3</th>
+                                <th>1-3</th>
+                                <th>2-3</th>
+                                <th>0-4</th>
+                                <th>1-4</th>
+                                <th>2-4</th>
+                                <th>3-4</th>
+                                <th>更新时间</th>
+                                </thead>
+                                <tbody id="gameTbody">
+                                {% for bifen in bifen_result %}
+                                    <tr name="{{ bifen['cid'] }}">
+                                        <td>{{ bifen['com_name'] }}</td>
+                                        <td>{{ bifen['m1_0'] }}</td>
+                                        <td>{{ bifen['m2_0'] }}</td>
+                                        <td>{{ bifen['m2_1'] }}</td>
+                                        <td>{{ bifen['m3_0'] }}</td>
+                                        <td>{{ bifen['m3_1'] }}</td>
+                                        <td>{{ bifen['m3_2'] }}</td>
+                                        <td>{{ bifen['m4_0'] }}</td>
+                                        <td>{{ bifen['m4_1'] }}</td>
+                                        <td>{{ bifen['m4_2'] }}</td>
+                                        <td>{{ bifen['m4_3'] }}</td>
+                                        <td>{{ bifen['m0_0'] }}</td>
+                                        <td>{{ bifen['m1_1'] }}</td>
+                                        <td>{{ bifen['m2_2'] }}</td>
+                                        <td>{{ bifen['m3_3'] }}</td>
+                                        <td>{{ bifen['m4_4'] }}</td>
+                                        <td>{{ bifen['m0_1'] }}</td>
+                                        <td>{{ bifen['m0_2'] }}</td>
+                                        <td>{{ bifen['m1_2'] }}</td>
+                                        <td>{{ bifen['m0_3'] }}</td>
+                                        <td>{{ bifen['m1_3'] }}</td>
+                                        <td>{{ bifen['m2_3'] }}</td>
+                                        <td>{{ bifen['m0_4'] }}</td>
+                                        <td>{{ bifen['m1_4'] }}</td>
+                                        <td>{{ bifen['m2_4'] }}</td>
+                                        <td>{{ bifen['m3_4'] }}</td>
+                                        <td>{{ bifen['insert_datetime'].strftime('%m-%d %H:%M') }}</td>
+
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="header">
+                            {#<h4 class="title">比分指数</h4>
+                            <p class="category"></p>#}
+                        </div>
+                        <div class="content table-responsive table-full-width">
+                            <table class="table table-striped">
+                            <thead>
+                                <th colspan="2"></th>
+                                <th style="text-align: center" colspan="7">主队</th>
+                                <th style="text-align: center" colspan="8">客队</th>
+
+                                </thead>
+                                <thead>
+                                <th></th>
+                                <th></th>
+                                <th>0球</th>
+                                <th>1球</th>
+                                <th>2球</th>
+                                <th>3球+</th>
+                                <th>3球</th>
+                                <th>4球</th>
+                                <th></th>
+                                <th>0球</th>
+                                <th>1球</th>
+                                <th>2球</th>
+                                <th>3球+</th>
+                                <th>3球</th>
+                                <th>4球</th>
+                                <th>返回率</th>
+                                </thead>
+                                <tbody>
+                                {% for bodan in bodan_data %}
+                                    <tr id="score{{ loop.index }}">
+
+                                    {% if (loop.index+1)%2 == 0 %}
+                                        <td rowspan="2">{{ bodan[0][:bodan[0]|length-2] }}</td>
+                                    {% endif %}
+                                     {#  文案  主赔  即赔  #}
+                                    <td style="padding-left: 0px">{{ bodan[0][(bodan[0]|length-2):] }}</td>
+                                    {#    主队数据    #}
+                                     {% for bd in bodan[1] %}
+                                        <td {% if bd == bodan[3][0] %} class="red_fnt"{% endif %} {% if bd == bodan[3][1] %} class="grn_fnt"{% endif %}>
+                                        {{ bd|string+"%" }}
+                                        </td>
+                                      {% endfor %}
+                                    <td></td>
+                                     {#    客队数据    #}
+                                    {% for bd2 in bodan[2] %}
+                                        <td {% if bd2 == bodan[4][0] %} class="red_fnt"{% endif %} {% if bd2 == bodan[4][1] %} class="grn_fnt"{% endif %}>
+                                        {{ bd2|string+"%" }}
+                                        </td>
+                                      {% endfor %}
+
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+ </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{#<script type="text/javascript" src="{{ url_for('static', filename='js/echarts.min.js')}}"></script>#}
+
+<script type="text/javascript">
+     let gameIds = [];
+    let kellyWinNums = [];
+    let kellyAvgNums = [];
+    let kellyLostNums = [];
+    let insertDateTimes = [];
+
+    {% for dd in data %}
+        gameIds.push({{ dd['game_id'] }});
+
+        kellyWinNums.push({{ dd.kelly_win_num }});
+        kellyAvgNums.push({{ dd.kelly_avg_num }});
+        kellyLostNums.push({{ dd.kelly_lost_num }});
+        insertDateTimes.push('{{ dd.insert_datetime.strftime('%m-%d %H:%M:%S') }}');
+    {% endfor %}
+
+    let gameIds_baijia = [];
+
+    let kellyWinNums_baijia = [];
+    let kellyAvgNums_baijia = [];
+    let kellyLostNums_baijia = [];
+    let insertDateTimes_baijia = [];
+
+    {% for dd in baijia_oupei %}
+        gameIds_baijia.push({{ dd['game_id'] }});
+        kellyWinNums_baijia.push({{ dd.kelly_win_num }});
+        kellyAvgNums_baijia.push({{ dd.kelly_avg_num }});
+        kellyLostNums_baijia.push({{ dd.kelly_lost_num }});
+        insertDateTimes_baijia.push('{{ dd.insert_datetime.strftime('%m-%d %H:%M:%S') }}');
+    {% endfor %}
+
+     // 比分标准差数据
+     let bodan_std= eval('('+decodeURIComponent('{{ bfs_data }}')+')');
+
+$(function () {
+    $('#gameThead th:lt(11)').css('color', 'red');
+    $('#gameThead th:gt(15):lt(10)').css('color', '#32CD32');
+    var tdSize = $('#gameTbody tr td').length - 1;
+    for (let i = 0; i < tdSize; i++) {
+        var bds = $('#gameTbody tr').find('td:eq(' + i + ')');
+        for (var j = 0; j < bds.length; j++) {
+            if ((j + 1) % 2 === 0) {
+                // 即赔比初赔小的，显示红色
+                if (+$(bds[j]).text() < +$(bds[j - 1]).text()) {
+                    $(bds[j]).css('color', 'red');
+                }
+            }
+        }
+    }
+
+    let dom4 = document.getElementById("container4");
+    let myChart4 = echarts.init(dom4);
+
+    let option_baijia_kelly = {
+        tooltip: {
+            trigger: 'axis',
+            formatter: function (dd) {
+                var arr = {};
+                for (var i = 0; i < dd.length; i++) {
+                    arr[dd[i].data + ""] = i;
+                }
+
+                function sortj(a, b) {
+                    return a.data - b.data;
+                }
+
+                var result = dd.sort(sortj);
+                var str = dd[0]['name'] + "<br/>";
+                for (var j = result.length - 1; j >= 0; j--) {
+                    str += result[j]['marker'] + result[j].data + '<br/>';
+                }
+                return str;
+            }
+        },
+        legend: {
+            data: ['胜', '负', '平']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: insertDateTimes_baijia
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                showSymbol: false,
+                name: '胜',
+                type: 'line',
+                data: kellyWinNums_baijia
+            },
+            {
+                showSymbol: false,
+                name: '平',
+                type: 'line',
+                data: kellyAvgNums_baijia,
+                itemStyle: {
+                    normal: {
+                        color: '#cebd4e',
+                        lineStyle: {
+                            color: '#cebd4e'
+                        }
+                    }
+                }
+            },
+            {
+                showSymbol: false,
+                name: '负',
+                type: 'line',
+                data: kellyLostNums_baijia,
+                itemStyle: {
+                    normal: {
+                        color: '#190e12',
+                        lineStyle: {
+                            color: '#190e12'
+                        }
+                    }
+                }
+            }
+        ]
+    };
+
+    if (option_baijia_kelly && typeof option_baijia_kelly === "object") {
+        myChart4.setOption(option_baijia_kelly, true);
+    }
+})
+
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/custom.echart.js') }}?r=5"></script>
+
+</body>
+</html>

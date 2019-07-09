@@ -1,0 +1,5 @@
+2019-06-20 18:06:02,010 - INFO - fajfsa 234
+2019-06-20 18:06:02,010 - INFO - This is a info log. 123
+2019-06-20 18:06:02,010 - WARNING - This is a warning log.
+2019-06-20 18:06:02,010 - ERROR - This is a error log.
+2019-06-20 18:06:02,010 - CRITICAL - This is a critical log.

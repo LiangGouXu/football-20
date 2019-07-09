@@ -1,0 +1,15 @@
+2019-07-09 19:10:55,787 - INFO - trend > query_pay_echart 耗时：0.03
+2019-07-09 19:10:55,818 - INFO - trend > query_record 耗时：0.03
+2019-07-09 19:10:55,830 - INFO - trend > calc_bodan 耗时：0.0
+2019-07-09 19:10:55,834 - INFO - trend > start_time 耗时：0.0
+2019-07-09 19:10:55,842 - INFO - trend > query_oupei_echart 耗时：0.01
+2019-07-09 19:11:39,118 - INFO - trend > query_pay_echart 耗时：0.0
+2019-07-09 19:11:39,121 - INFO - trend > query_record 耗时：0.0
+2019-07-09 19:11:39,121 - INFO - trend > calc_bodan 耗时：0.0
+2019-07-09 19:11:39,130 - INFO - trend > start_time 耗时：0.01
+2019-07-09 19:11:39,142 - INFO - trend > query_oupei_echart 耗时：0.01
+2019-07-09 19:14:14,984 - INFO - trend > query_pay_echart 耗时：0.0
+2019-07-09 19:14:15,202 - INFO - trend > query_record 耗时：0.22
+2019-07-09 19:14:15,217 - INFO - trend > calc_bodan 耗时：0.01
+2019-07-09 19:14:15,223 - INFO - trend > start_time 耗时：0.0
+2019-07-09 19:14:15,238 - INFO - trend > query_oupei_echart 耗时：0.01
