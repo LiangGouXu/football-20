@@ -10,7 +10,7 @@ itsdangerous==1.1.0
 Jinja2==2.10.1
 lxml==4.3.4
 MarkupSafe==1.1.1
-numpy==1.16.4
+numpy==1.22.0
 pkg-resources==0.0.0
 PyMySQL==0.9.3
 pytz==2019.1
